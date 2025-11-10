@@ -26,7 +26,7 @@ def _index_by_base(files: List[str], suffix: str, skip_suffix: str | None = None
                 continue
             true_base = base[: -len(suffix)]
         else:
-            # برای ولوم‌ها، فایل‌های ماسک را کنار بگذار (اگر خواستیم)
+            # For volumes, optionally skip files that look like masks (if requested)
             if skip_suffix and base.endswith(skip_suffix):
                 continue
             true_base = base
@@ -77,7 +77,7 @@ def build_train_df(
         m = masks_by_base.get(b)
 
         if v is None and allow_mask_as_volume:
-            # فالبک: مثل نوت‌بوک اگر ولوم نبود از خودِ ماسک به‌عنوان ولوم استفاده کن
+            # Fallback: if no volume exists, use the mask itself as the volume (as done in the notebook)
             v = masks_by_base.get(b)
 
         if only_masked and (m is None):
@@ -91,14 +91,14 @@ def build_train_df(
             missing_mask.append(b)
 
     if missing_vol and not allow_mask_as_volume:
-        print(f"⚠️ {len(missing_vol)} bases have MASK but NO VOLUME (showing up to 10):")
+        print(f" {len(missing_vol)} bases have MASK but NO VOLUME (showing up to 10):")
         print(missing_vol[:10])
     if missing_mask:
-        print(f"ℹ️ {len(missing_mask)} bases have VOLUME but NO MASK (still OK for inference).")
+        print(f" {len(missing_mask)} bases have VOLUME but NO MASK (still OK for inference).")
         print(missing_mask[:10])
 
     if not rows:
-        print("❌ No usable cases found. Returned empty DataFrame.")
+        print(" No usable cases found. Returned empty DataFrame.")
         return pd.DataFrame(columns=["file_base", "nifti_path", "mask_path"])
 
     return pd.DataFrame(rows).sort_values("file_base").reset_index(drop=True)
