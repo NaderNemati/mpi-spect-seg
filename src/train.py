@@ -107,7 +107,6 @@ def train_model(train_df: pd.DataFrame,
     if ds_len == 0:
         raise RuntimeError("Train dataset is empty! Verify volume/mask files and naming.")
 
-    # اگر با num_workers مشکل دارید مقدار را 0 کنید
     train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True, num_workers=2)
 
     for epoch in range(epochs):
@@ -159,7 +158,7 @@ if __name__ == "__main__":
     )
 
     if train_df.empty:
-        print("❌ Constructed train_df is empty.")
+        print(" Constructed train_df is empty.")
         print("Hints:")
         print(" - Ensure your volume files are named like <base>.nii.gz (without _mask).")
         print(" - Masks should be <base>_mask.nii(.gz) in the same NIfTI folder.")
