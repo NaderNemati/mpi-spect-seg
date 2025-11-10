@@ -4,7 +4,7 @@
     <tr>
       <td valign=top style="border: 0px solid #c6c6c6 !important; padding: 0px !important;">
         <div align=center valign=top>
-          <img src="https://github.com/NaderNemati/mpi-spect-seg/blob/main/images/header.png" alt="Project Structure" style="margin: 0px !important; height: 400px !important;">
+          <img src="https://github.com/NaderNemati/mpi-spect-seg/blob/main/images/header.png" alt="Project Structure" style="margin: 0px !important; height: 600px !important;">
         </div>
       </td>
     </tr>
