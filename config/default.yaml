@@ -1,0 +1,94 @@
+# =========================
+#  MPI-SPECT Seg Pipeline
+#  default.yaml
+# =========================
+
+project:
+  name: mpi-spect-seg
+  seed: 42
+
+paths:
+  # Dataset root (can be overridden via CLI with --data_root)
+  data_root: "/home/nader/Desktop/Diognastic/MPI_SPECT"
+  # Output directories (logs/weights/viz/masks)
+  outputs_dir: "outputs"
+  models_dir: "models"
+
+data:
+  # Volume and mask folders; if empty, fallback to data_root/NIfTI
+  vols_dir: ""      # e.g., "/home/.../MPI_SPECT/volumes"
+  masks_dir: ""     # e.g., "/home/.../MPI_SPECT/NIfTI"
+  # Suffixes to identify files
+  vol_suffix: ""    # if volumes have a suffix (e.g., _img), set it here
+  mask_suffix: "_mask"
+  # If only mask files exist, optionally treat masks as volumes as well (for debug)
+  allow_mask_as_volume: false
+  # Recursively scan subfolders during discovery
+  recursive: true
+  # Allowed NIfTI extensions
+  extensions: [".nii.gz", ".nii"]
+
+preprocess:
+  # Target 3D resize shape
+  target_shape: [64, 64, 56]
+  # Intensity normalization to [0, 1]
+  normalize: true
+
+model:
+  name: "UNet3D"
+  in_channels: 1
+  out_channels: 1
+  init_features: 32
+  # Weights path for testing/finetuning
+  weights: "models/unet3d_weights.pth"
+
+train:
+  enabled: true
+  epochs: 30
+  batch_size: 2
+  lr: 1.0e-4
+  # If CUDA is not available, CPU will be used automatically
+  device: "auto"  # "auto" | "cpu" | "cuda"
+  # Split ratios if no metadata-driven split is used
+  val_size: 0.15
+  test_size: 0.15
+  shuffle: true
+  num_workers: 2
+  loss: "BCEWithLogitsLoss"  # currently used in the code
+
+test:
+  enabled: true
+  batch_size: 1
+  device: "auto"
+  # Test only cases that have masks
+  only_masked: true
+  # Logits → binary threshold
+  threshold: 0.5
+  # Number of samples to export as 4-panel PNGs
+  n_visualize: 5
+
+postprocess:
+  # Advanced post-processing parameters (matching the notebook logic)
+  enable: true
+  min_comp_voxels: 30
+  hole_size_threshold: 200
+  keep_largest_only: true
+  closing_structure_radius: 1
+  median_filter_size: 3
+  smoothing_sigma: 0.3
+  threshold: 0.5
+
+dae:
+  # Optional DAE usage
+  enable: false
+  input_shape: [64, 64, 56]
+  latent_dim: 128
+  weights: "models/mask_dae_weights.pth"
+
+viz:
+  # Output paths for test-time visualizations
+  masks_out: "outputs/masks_test"
+  viz_out:   "outputs/viz_test"
+  # Output mask filename suffix
+  mask_suffix_out: "_pred_pp.nii.gz"   # if postprocess is disabled, script may emit _pred_noPP.nii.gz
+
