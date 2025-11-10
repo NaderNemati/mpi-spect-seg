@@ -37,7 +37,7 @@ def conservative_postprocess(
     ring_compactness_min: float = 0.6
 ) -> np.ndarray:
     """
-    محافظه‌کارانه: حفره‌ی حلقه‌ای مرکزی را پر نکن، فقط سوراخ‌های کوچک/دایره‌ای را پُر کن.
+    Conservative behavior: do NOT fill the central ring-like hole; only fill small/round holes.
     """
     m = (mask_pred > 0).astype(bool)
 
